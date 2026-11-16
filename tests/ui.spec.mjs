@@ -59,8 +59,9 @@ test('formularul nu se trimite incomplet și spune ce lipsește', async ({ page 
   await page.getByRole('radio', { name: /Sala 4/ }).check();
   await page.getByRole('radio', { name: /Buzgău Patrik/ }).check();
   await page.getByRole('radio', { name: 'Pozitiv' }).check();
-  await expect(page.locator('#destOpts')).toBeHidden(); // despre Patrik: ajunge doar la el
   await expect(page.locator('#recipients')).toContainText('Buzgău Patrik (coordonatorul demonstratorilor)');
+  await expect(page.locator('#recipients')).toContainText('Conf. Denes (supervizor)');
+  await expect(page.getByRole('radio', { name: /Doar coordonatorul/ })).toHaveCount(0);
   await page.click('#trimite');
   await expect(page.locator('#formErr')).toContainText('ziua');
   await expect(page.locator('#formErr')).toContainText('locul');

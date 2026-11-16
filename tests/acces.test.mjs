@@ -42,11 +42,11 @@ before(async () => {
 });
 
 // ---------- Cine vede ce ----------
-test('demonstratorul își vede doar feedbackul lui, fără cel confidențial', async () => {
-  assert.deepEqual(await vede('munteanu'), ['F1']);
+test('demonstratorul își vede doar feedbackul lui (alegerea „doar coordonator” e ignorată)', async () => {
+  assert.deepEqual(await vede('munteanu'), ['F1', 'F2']);
 });
-test('responsabilul de sală vede feedbackul din sala lui, fără cel confidențial', async () => {
-  assert.deepEqual(await vede('jovrea'), ['F1', 'F7']);
+test('responsabilul de sală vede tot feedbackul din sala lui', async () => {
+  assert.deepEqual(await vede('jovrea'), ['F1', 'F2', 'F7']);
   assert.deepEqual(await vede('nagy'), ['F5']);
 });
 test('responsabilul Sălii 4 NU vede feedbackul despre Patrik', async () => {
@@ -55,10 +55,10 @@ test('responsabilul Sălii 4 NU vede feedbackul despre Patrik', async () => {
 test('Barna Ioana își vede feedbackul din ambele săli; Stoma-LR nu are responsabil', async () => {
   assert.deepEqual(await vede('barna'), ['F6', 'F8']);
 });
-test('Patrik (coordonator) vede tot, inclusiv confidențialul', async () => {
+test('Patrik (coordonator) vede tot', async () => {
   assert.deepEqual(await vede('patrik'), ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8']);
 });
-test('supervizorul (Conf. Denes) vede tot, inclusiv confidențialul și feedbackul despre Patrik', async () => {
+test('supervizorul (Conf. Denes) vede tot, inclusiv feedbackul despre Patrik', async () => {
   assert.deepEqual(await vede('denes'), ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8']);
 });
 test('supervizorul nu poate șterge feedback', async () => {
@@ -75,9 +75,9 @@ test('supervizorul nu poate fi ales în formular (nu e în nicio sală)', async 
 test('adminul nu vede feedbackul altora doar pentru că e admin (Sala 5: responsabil e Patrik)', async () => {
   assert.deepEqual(await vede('admin'), []);
 });
-test('feedbackul „doar coordonator” despre Patrik e salvat ca adresat lui', async () => {
-  const r = await sql("select destinatie from public.feedback where descriere like 'F4 –%'");
-  assert.equal(r[0].destinatie, 'persoana');
+test('niciun feedback nu mai e salvat ca „doar coordonator”, orice ar trimite clientul', async () => {
+  const r = await sql("select count(*)::int n from public.feedback where destinatie <> 'persoana'");
+  assert.equal(r[0].n, 0);
 });
 
 // ---------- Vizitatorul anonim ----------
@@ -145,7 +145,7 @@ test('după eliminarea din listă, persoana nu mai vede nimic', async () => {
   // repunem contul: se leagă automat de utilizatorul existent
   const ins = await admin.from('conturi').insert({ staff_id: await staffId('Munteanu Victor'), email: OAMENI.munteanu.email });
   assert.ifError(ins.error);
-  assert.deepEqual(await vede('munteanu'), ['F1']);
+  assert.deepEqual(await vede('munteanu'), ['F1', 'F2']);
 });
 test('ultimul admin nu își poate retrage singur dreptul de admin', async () => {
   const c = await login('admin');
@@ -166,7 +166,6 @@ for (const [nume, o, mesaj] of [
   ['interval 20–21', { ora: 20 }, /între 14 și 20/],
   ['interval 13–14', { ora: 13 }, /între 14 și 20/],
   ['locație inventată', { loc: 'amfiteatru' }, /Locație/],
-  ['destinatar inventat', { dest: 'decan' }, /Destinatar/],
 ]) {
   test(`trimiterea e refuzată: ${nume}`, async () => {
     const { error } = await trimite({ persoana: 'Munteanu Victor', sala: 'sala-1', cheie: 'X', ...o });

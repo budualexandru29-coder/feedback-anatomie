@@ -14,7 +14,7 @@
   <header class="top">
     <div class="eyebrow"><span>Anatomie</span><span class="sep"></span><span>Lucrări practice · anul I</span></div>
     <h1>Feedback pentru demonstratori și voluntari</h1>
-    <p class="lead">Spune-ne cum a decurs explicația pe preparate, pe cadavru sau la muzeu. Feedbackul ajunge la persoana despre care scrii și la coordonatorul demonstratorilor.</p>
+    <p class="lead">Spune-ne cum a decurs explicația pe preparate, pe cadavru sau la muzeu. Feedbackul ajunge la persoana despre care scrii, la responsabilul sălii, la coordonatorul demonstratorilor și la supervizor.</p>
     <div class="assure">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
       <p><strong>Feedbackul este anonim.</strong> Nu îți cerem nume, email sau cont, iar site-ul nu salvează adresa IP, browserul sau ora exactă a trimiterii. <a href="confidentialitate.html">Ce se păstrează și cine vede</a></p>
@@ -79,14 +79,9 @@
       <p class="warn"><strong>Ca să rămâi anonim:</strong> nu scrie numele tău, numele colegilor sau detalii pe care le știi doar tu. În grupele mici, un detaliu foarte personal te poate da de gol.</p>
     </fieldset>
 
-    <fieldset class="step" id="stepDest" hidden>
-      <legend><span class="step-h"><span class="step-n">6</span><h2>Cine îl primește?</h2></span></legend>
-      <div class="chips" id="destOpts" role="radiogroup" aria-label="Destinatar">
-        <label class="opt"><input type="radio" name="destinatie" id="destPersoana" value="persoana" checked><span>Persoana despre care scriu<small>plus responsabilul de sală, coordonatorul și supervizorul</small></span></label>
-        <label class="opt"><input type="radio" name="destinatie" id="destCoord" value="coordonator"><span>Doar coordonatorul<small>și supervizorul; persoana nu îl vede</small></span></label>
-      </div>
+    <div class="step" id="stepDest" hidden>
       <div class="recipients" id="recipients" aria-live="polite"></div>
-    </fieldset>
+    </div>
 
     <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
 

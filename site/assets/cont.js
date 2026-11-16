@@ -137,9 +137,9 @@
     $('roluri').innerHTML = roluri.join('');
     $('tabConturi').hidden = !profil.admin;
     $('scope').textContent = profil.supervizor
-      ? 'Vezi tot feedbackul trimis, din toate sălile, inclusiv cel confidențial.'
+      ? 'Vezi tot feedbackul trimis, din toate sălile.'
       : profil.coordonator
-      ? 'Vezi tot feedbackul trimis, inclusiv cel confidențial, adresat doar ție.'
+      ? 'Vezi tot feedbackul trimis, din toate sălile.'
       : profil.responsabil_sali.length
         ? 'Vezi feedbackul despre tine și feedbackul despre persoanele din sala de care răspunzi.'
         : 'Vezi feedbackul trimis despre tine.';

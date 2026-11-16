@@ -19,7 +19,6 @@
     staff: Number(form.querySelector('input[name="persoana"]:checked')?.value) || null,
     tip: form.querySelector('input[name="tip"]:checked')?.value,
     locatie: form.querySelector('input[name="locatie"]:checked')?.value,
-    destinatie: form.querySelector('input[name="destinatie"]:checked')?.value || 'persoana',
   });
 
   // ----- Pasul 1: sălile
@@ -60,18 +59,15 @@
 
   // ----- Pasul 6: cine primește, scris explicit
   function arataDestinatari() {
-    const { sala, staff, destinatie } = stare();
+    const { sala, staff } = stare();
     if (!staff) return;
     const p = lista.persoane.get(staff);
     const s = lista.sali.find(x => x.id === sala);
     const coord = lista.coordonator;
     const resp = s.responsabil_id ? lista.persoane.get(s.responsabil_id) : null;
-    $('destOpts').hidden = !!p.coordonator;
     let cine;
     if (p.coordonator) {
       cine = [`${esc(p.nume)} (coordonatorul demonstratorilor)`];
-    } else if (destinatie === 'coordonator') {
-      cine = [`${esc(coord.nume)} (coordonator)`];
     } else {
       cine = [esc(p.nume)];
       if (resp && resp.id !== p.id && resp.id !== coord?.id) cine.push(`${esc(resp.nume)} (responsabil ${esc(s.nume)})`);
@@ -129,15 +125,13 @@
     try {
       if (!$('website').value) { // câmp-capcană pentru roboți; oamenii nu îl văd
         const { error } = await sb.rpc('trimite_feedback', {
-          p_staff_id: st.staff, p_sala_id: st.sala, p_tip: st.tip, p_destinatie: st.destinatie,
+          p_staff_id: st.staff, p_sala_id: st.sala, p_tip: st.tip, p_destinatie: 'persoana',
           p_data: $('data').value, p_ora_start: Number($('ora').value), p_locatie: st.locatie, p_descriere: text,
         });
         if (error) throw error;
       }
       const p = lista.persoane.get(st.staff);
-      $('doneTxt').textContent = st.destinatie === 'coordonator' && !p.coordonator
-        ? 'Feedbackul a ajuns doar la coordonatorul demonstratorilor și la supervizor.'
-        : `Feedbackul despre ${p.nume} a fost înregistrat, fără date despre tine.`;
+      $('doneTxt').textContent = `Feedbackul despre ${p.nume} a fost înregistrat, fără date despre tine.`;
       form.hidden = true; $('done').hidden = false;
       $('done').scrollIntoView({ block: 'start' });
     } catch (err) {
