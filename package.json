@@ -1,0 +1,19 @@
+{
+  "name": "feedback-anatomie",
+  "version": "1.0.0",
+  "description": "Feedback anonim LP Anatomie",
+  "scripts": {
+    "test": "node --test tests/acces.test.mjs && playwright test",
+    "build-seed": "python3 -I scripts/build_seed.py",
+    "verifica-nume": "python3 -I scripts/verifica_nume.py ../ANTET.docx"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "pg": "^8.23.1",
+    "supabase": "^3.2.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0"
+  },
+  "private": true
+}

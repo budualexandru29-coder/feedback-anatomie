@@ -1,0 +1,17 @@
+{
+  "_explicatie": "Corecturi față de ANTET.docx, confirmate de Budu Alexandru pe 16.11.2026. Scriptul de verificare acceptă doar diferențele listate aici.",
+  "adauga": [
+    {"sala": "SALA 4", "nume": "Buzgău Patrik", "rol": "demonstrator", "motiv": "Patrik este și la Sala 4"}
+  ],
+  "elimina": [
+    {"sala": "STOMA -LR", "nume": "Buzgău Patrik", "motiv": "La STOMA-LR sunt doar Mocanu Maria și Barna Ioana"}
+  ],
+  "coordonator": "Buzgău Patrik",
+  "nume_sali": {
+    "SALA 1": "Sala 1",
+    "SALA 3": "Sala 3",
+    "SALA 4": "Sala 4",
+    "SALA 5": "Sala 5",
+    "STOMA -LR": "Stoma-LR"
+  }
+}

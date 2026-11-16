@@ -1,0 +1,189 @@
+[
+ {
+  "sala": "SALA 1",
+  "grupe": 4,
+  "responsabil": "Jovrea Andrei",
+  "membri": [
+   {
+    "nume": "Munteanu Victor",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Forgaci Andreea",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Jovrea Andrei",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Gherasim Ilinca",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Constantinescu Elena",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Candidatu Anisia",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Crețu Adina",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Mocanu Anastasia",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Dediu Radu",
+    "rol": "voluntar"
+   }
+  ]
+ },
+ {
+  "sala": "SALA 3",
+  "grupe": 2,
+  "responsabil": "Nagy David",
+  "membri": [
+   {
+    "nume": "Nagy David",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Peter Zalan",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Adăscăliței Maria",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Debreczeni Csongor",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Drenea Sebastian",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Corda Anna",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Kiraly Tamas",
+    "rol": "voluntar"
+   }
+  ]
+ },
+ {
+  "sala": "SALA 4",
+  "grupe": 2,
+  "responsabil": "Pleșa Vlad",
+  "membri": [
+   {
+    "nume": "Pleșa Vlad",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Biriș David",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Vlaic Alexandru",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Blaga Singrid",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Bihari Vlad",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Bud Mădălina",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Borovină Bianca",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Șiara Lidia",
+    "rol": "voluntar"
+   }
+  ]
+ },
+ {
+  "sala": "SALA 5",
+  "grupe": 5,
+  "responsabil": "Buzgău Patrik",
+  "membri": [
+   {
+    "nume": "Tănase Sabina",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Gudor Eszter",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Boariu Andreea",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Budu Alexandru",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Buzgău Patrik",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Barna Ioana",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Chelemen Bianca",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Pascaru Radu",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Zalan Zsombori",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Telean Dalia",
+    "rol": "voluntar"
+   },
+   {
+    "nume": "Tank Hunor",
+    "rol": "voluntar"
+   }
+  ]
+ },
+ {
+  "sala": "STOMA -LR",
+  "grupe": null,
+  "responsabil": null,
+  "membri": [
+   {
+    "nume": "Mocanu Maria",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Barna Ioana",
+    "rol": "demonstrator"
+   },
+   {
+    "nume": "Buzgău Patrik",
+    "rol": "demonstrator"
+   }
+  ]
+ }
+]

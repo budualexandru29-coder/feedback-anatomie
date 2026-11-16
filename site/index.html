@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Feedback LP Anatomie</title>
+<meta name="description" content="Feedback anonim pentru demonstratorii și voluntarii de la lucrările practice de Anatomie.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow"><span>Anatomie</span><span class="sep"></span><span>Lucrări practice · anul I</span></div>
+    <h1>Feedback pentru demonstratori și voluntari</h1>
+    <p class="lead">Spune-ne cum a decurs explicația pe preparate, pe cadavru sau la muzeu. Feedbackul ajunge la persoana despre care scrii și la coordonatorul demonstratorilor.</p>
+    <div class="assure">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      <p><strong>Feedbackul este anonim.</strong> Nu îți cerem nume, email sau cont, iar site-ul nu salvează adresa IP, browserul sau ora exactă a trimiterii. <a href="confidentialitate.html">Ce se păstrează și cine vede</a></p>
+    </div>
+  </header>
+
+  <p id="loadErr" class="error" role="alert" hidden></p>
+
+  <form id="form" novalidate hidden>
+    <fieldset class="step" id="stepSala">
+      <legend><span class="step-h"><span class="step-n">1</span><h2>În ce sală ai fost?</h2></span></legend>
+      <div class="chips" id="sali" role="radiogroup" aria-label="Sala"></div>
+    </fieldset>
+
+    <fieldset class="step" id="stepPersoana" hidden>
+      <legend><span class="step-h"><span class="step-n">2</span><h2>Despre cine este feedbackul?</h2></span></legend>
+      <div class="people" id="persoane" role="radiogroup" aria-label="Persoana"></div>
+    </fieldset>
+
+    <fieldset class="step" id="stepTip" hidden>
+      <legend><span class="step-h"><span class="step-n">3</span><h2>Ce fel de feedback este?</h2></span></legend>
+      <div class="tone">
+        <label class="opt pos"><input type="radio" name="tip" id="tipPozitiv" value="pozitiv"><span>Pozitiv</span></label>
+        <label class="opt neg"><input type="radio" name="tip" id="tipNegativ" value="negativ"><span>Negativ</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset class="step" id="stepCand" hidden>
+      <legend><span class="step-h"><span class="step-n">4</span><h2>Când și unde s-a întâmplat?</h2></span></legend>
+      <div class="row2">
+        <div class="field">
+          <label for="data">Ziua</label>
+          <select id="data" required></select>
+        </div>
+        <div class="field">
+          <label for="ora">Intervalul orar</label>
+          <select id="ora" required></select>
+        </div>
+      </div>
+      <div class="field">
+        <span class="lbl" id="locLbl">Locul</span>
+        <div class="chips" role="radiogroup" aria-labelledby="locLbl">
+          <label class="opt"><input type="radio" name="locatie" id="locTabla" value="tabla"><span>La tablă</span></label>
+          <label class="opt"><input type="radio" name="locatie" id="locCadavru" value="cadavru"><span>La cadavru</span></label>
+          <label class="opt"><input type="radio" name="locatie" id="locMuzeu" value="muzeu"><span>La muzeu</span></label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="step" id="stepText" hidden>
+      <legend><span class="step-h"><span class="step-n">5</span><h2>Ce s-a întâmplat?</h2></span></legend>
+      <ul class="guide">
+        <li>Ce s-a întâmplat, pe scurt?</li>
+        <li>Ce a spus sau ce a făcut persoana?</li>
+        <li>Cum te-a ajutat sau cum te-a afectat pe tine ori grupa?</li>
+      </ul>
+      <div class="field">
+        <label for="descriere" class="sr">Descrierea întâmplării</label>
+        <textarea id="descriere" maxlength="3000" placeholder="Ex.: La cadavru, la regiunea axilară, ne-a arătat fiecare ram al plexului brahial și a așteptat până l-am găsit fiecare dintre noi..."></textarea>
+        <div class="counter" id="counter">0 / 3000</div>
+      </div>
+      <p class="warn"><strong>Ca să rămâi anonim:</strong> nu scrie numele tău, numele colegilor sau detalii pe care le știi doar tu. În grupele mici, un detaliu foarte personal te poate da de gol.</p>
+    </fieldset>
+
+    <fieldset class="step" id="stepDest" hidden>
+      <legend><span class="step-h"><span class="step-n">6</span><h2>Cine îl primește?</h2></span></legend>
+      <div class="chips" id="destOpts" role="radiogroup" aria-label="Destinatar">
+        <label class="opt"><input type="radio" name="destinatie" id="destPersoana" value="persoana" checked><span>Persoana despre care scriu<small>și coordonatorul, plus responsabilul de sală</small></span></label>
+        <label class="opt"><input type="radio" name="destinatie" id="destCoord" value="coordonator"><span>Doar coordonatorul<small>confidențial, persoana nu îl vede</small></span></label>
+      </div>
+      <div class="recipients" id="recipients" aria-live="polite"></div>
+    </fieldset>
+
+    <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <p id="formErr" class="error" role="alert" hidden></p>
+    <button class="btn block" type="submit" id="trimite" hidden>Trimite feedbackul anonim</button>
+  </form>
+
+  <section class="done" id="done" hidden aria-live="polite">
+    <div class="check"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h2>Mulțumim, feedbackul a fost trimis.</h2>
+    <p class="muted" id="doneTxt"></p>
+    <button class="btn ghost" type="button" id="altul">Trimite alt feedback</button>
+  </section>
+
+  <footer class="foot">
+    <a href="confidentialitate.html">Confidențialitate</a>
+    <a href="cont.html">Cont catedră</a>
+  </footer>
+</div>
+<script src="vendor/supabase.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/formular.js"></script>
+</body>
+</html>

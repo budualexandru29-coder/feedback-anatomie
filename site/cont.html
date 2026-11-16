@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Cont catedră · Feedback LP Anatomie</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap" id="authWrap">
+  <header class="top">
+    <div class="eyebrow"><span>Anatomie</span><span class="sep"></span><span>Cont catedră</span></div>
+    <h1>Feedbackul primit de la studenți</h1>
+    <p class="lead">Pentru demonstratori, voluntari și coordonator. Fiecare vede doar feedbackul care îi este adresat.</p>
+  </header>
+
+  <p id="cfgErr" class="error" role="alert" hidden></p>
+
+  <section class="panel" id="authPanel" hidden>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" id="tabLogin" aria-selected="true">Intră în cont</button>
+      <button type="button" role="tab" id="tabActivare" aria-selected="false">Activează contul</button>
+      <button type="button" role="tab" id="tabReset" aria-selected="false">Am uitat parola</button>
+    </div>
+
+    <form id="fLogin" class="grid-form" novalidate>
+      <div class="field"><label for="loginEmail">Email</label><input type="email" id="loginEmail" autocomplete="username" required></div>
+      <div class="field"><label for="loginPass">Parola</label><input type="password" id="loginPass" autocomplete="current-password" required></div>
+      <button class="btn block" type="submit">Intră în cont</button>
+    </form>
+
+    <form id="fActivare" novalidate hidden>
+      <p class="hint">Folosește emailul pe care l-ai dat adminului. Merge doar dacă adminul a adăugat deja acest email în listă.</p>
+      <div class="field"><label for="actEmail">Email</label><input type="email" id="actEmail" autocomplete="username" required></div>
+      <div class="field"><label for="actPass">Alege o parolă (minimum 10 caractere)</label><input type="password" id="actPass" autocomplete="new-password" minlength="10" required></div>
+      <button class="btn block" type="submit">Activează contul</button>
+    </form>
+
+    <form id="fReset" novalidate hidden>
+      <p class="hint">Primești un email cu un link prin care îți setezi o parolă nouă.</p>
+      <div class="field"><label for="resetEmail">Email</label><input type="email" id="resetEmail" autocomplete="username" required></div>
+      <button class="btn block" type="submit">Trimite linkul</button>
+    </form>
+
+    <form id="fParolaNoua" novalidate hidden>
+      <p class="hint">Setează parola nouă pentru contul tău.</p>
+      <div class="field"><label for="newPass">Parola nouă (minimum 10 caractere)</label><input type="password" id="newPass" autocomplete="new-password" minlength="10" required></div>
+      <button class="btn block" type="submit">Salvează parola</button>
+    </form>
+
+    <p id="authMsg" role="status" hidden></p>
+  </section>
+  <footer class="foot"><a href="index.html">Formularul pentru studenți</a><a href="confidentialitate.html">Confidențialitate</a></footer>
+</div>
+
+<div class="wrap wide" id="app" hidden>
+  <header class="who">
+    <div>
+      <div class="eyebrow"><span>Anatomie</span><span class="sep"></span><span>Feedback LP</span></div>
+      <h1 id="numeEu"></h1>
+      <div class="badges" id="roluri"></div>
+    </div>
+    <div class="chips">
+      <button class="btn ghost sm" type="button" id="btnParola">Schimbă parola</button>
+      <button class="btn ghost sm" type="button" id="btnIesire">Ieși din cont</button>
+    </div>
+  </header>
+
+  <form id="fSchimbaParola" class="panel" novalidate hidden>
+    <div class="field"><label for="chPass">Parola nouă (minimum 10 caractere)</label><input type="password" id="chPass" autocomplete="new-password" minlength="10" required></div>
+    <div class="chips"><button class="btn sm" type="submit">Salvează parola</button><button class="btn ghost sm" type="button" id="chCancel">Renunță</button></div>
+    <p id="chMsg" role="status" hidden></p>
+  </form>
+
+  <div class="tabs" role="tablist" id="appTabs">
+    <button type="button" role="tab" id="tabFeedback" aria-selected="true">Feedback</button>
+    <button type="button" role="tab" id="tabConturi" aria-selected="false" hidden>Conturi</button>
+  </div>
+
+  <section id="vFeedback" style="display:grid;gap:14px;padding-top:16px">
+    <p class="muted small" id="scope"></p>
+    <div class="stats">
+      <div class="stat"><b id="nTotal">0</b><span>în total</span></div>
+      <div class="stat pos"><b id="nPoz">0</b><span>pozitive</span></div>
+      <div class="stat neg"><b id="nNeg">0</b><span>negative</span></div>
+    </div>
+    <div class="filters">
+      <div class="field"><label for="fTip">Tip</label>
+        <select id="fTip"><option value="">Toate</option><option value="pozitiv">Pozitive</option><option value="negativ">Negative</option></select></div>
+      <div class="field" id="fPersoanaWrap"><label for="fPersoana">Persoana</label><select id="fPersoana"></select></div>
+      <div class="field" id="fSalaWrap"><label for="fSala">Sala</label><select id="fSala"></select></div>
+      <div class="field"><label for="fLoc">Locul</label>
+        <select id="fLoc"><option value="">Oriunde</option><option value="tabla">Tablă</option><option value="cadavru">Cadavru</option><option value="muzeu">Muzeu</option></select></div>
+    </div>
+    <p id="listErr" class="error" role="alert" hidden></p>
+    <div class="list" id="lista"></div>
+  </section>
+
+  <section id="vConturi" hidden style="display:grid;gap:14px;padding-top:16px">
+    <div class="prose small">
+      <p>Introdu emailul fiecărei persoane care are nevoie de cont. Persoana își activează apoi singură contul din <strong>Activează contul</strong>, cu același email. Altă variantă: creezi utilizatorul direct din Supabase (Authentication → Add user), cu o parolă temporară. Emailurile se văd doar aici.</p>
+    </div>
+    <div class="field" style="max-width:320px"><label for="cauta">Caută după nume</label><input type="search" id="cauta" placeholder="ex. Pleșa"></div>
+    <p id="contMsg" role="status" hidden></p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nume</th><th>Săli</th><th>Email</th><th>Stare</th><th>Admin</th><th></th></tr></thead>
+        <tbody id="tConturi"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script src="vendor/supabase.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/cont.js"></script>
+</body>
+</html>
