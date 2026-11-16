@@ -131,11 +131,14 @@
     $('numeEu').textContent = profil.nume;
     const roluri = [];
     if (profil.coordonator) roluri.push('<span class="pill">Coordonator · vezi tot feedbackul</span>');
+    if (profil.supervizor) roluri.push('<span class="pill">Supervizor · vezi tot feedbackul</span>');
     for (const s of profil.responsabil_sali) roluri.push(`<span class="pill">Responsabil ${esc(lista.sali.find(x => x.id === s)?.nume)}</span>`);
     if (profil.admin) roluri.push('<span class="pill">Admin</span>');
     $('roluri').innerHTML = roluri.join('');
     $('tabConturi').hidden = !profil.admin;
-    $('scope').textContent = profil.coordonator
+    $('scope').textContent = profil.supervizor
+      ? 'Vezi tot feedbackul trimis, din toate sălile, inclusiv cel confidențial.'
+      : profil.coordonator
       ? 'Vezi tot feedbackul trimis, inclusiv cel confidențial, adresat doar ție.'
       : profil.responsabil_sali.length
         ? 'Vezi feedbackul despre tine și feedbackul despre persoanele din sala de care răspunzi.'
@@ -242,7 +245,7 @@
       const c = conturi.get(p.id);
       const stare = !c ? '<span class="status fara">Fără cont</span>'
         : c.user_id ? '<span class="status activ">Activ</span>' : '<span class="status asteapta">Așteaptă activarea</span>';
-      const sali = lista.saliPersoana(p.id).map(s => esc(s.nume)).join(', ');
+      const sali = p.supervizor ? 'Supervizor' : lista.saliPersoana(p.id).map(s => esc(s.nume)).join(', ');
       return `<tr data-staff="${p.id}">
         <td><strong>${esc(p.nume)}</strong>${p.coordonator ? ' <span class="tag coord">Coord.</span>' : ''}</td>
         <td class="muted">${sali}</td>
@@ -256,6 +259,32 @@
     }).join('');
   }
   $('cauta').addEventListener('input', randeazaConturi);
+
+  // Adăugarea unei persoane noi (sau a unei persoane existente într-o sală nouă)
+  function pregatesteAdaugare() {
+    $('addSala').innerHTML = lista.sali.map(s => `<option value="${esc(s.id)}">${esc(s.nume)}</option>`).join('');
+    $('addSalaWrap').hidden = $('addRol').value === 'supervizor';
+  }
+  $('addRol').addEventListener('change', pregatesteAdaugare);
+  pregatesteAdaugare();
+
+  $('fAdauga').addEventListener('submit', async e => {
+    e.preventDefault();
+    const nume = $('addNume').value.trim().replace(/\s+/g, ' ');
+    const rol = $('addRol').value;
+    const email = $('addEmail').value.trim().toLowerCase();
+    if (nume.length < 3) return mesaj('addMsg', 'Scrie numele complet.');
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return mesaj('addMsg', 'Emailul nu pare valid.');
+    const { error } = await sb.rpc('adauga_persoana', {
+      p_nume: nume, p_rol: rol, p_sala_id: rol === 'supervizor' ? null : $('addSala').value, p_email: email || null,
+    });
+    if (error) return mesaj('addMsg', FB.mesajEroare(error));
+    lista = await FB.incarcaLista(sb);
+    const unde = rol === 'supervizor' ? 'ca supervizor' : `în ${lista.sali.find(s => s.id === $('addSala').value).nume}, ca ${rol}`;
+    mesaj('addMsg', `Adăugat: ${nume}, ${unde}.${email ? ' Contul așteaptă activarea.' : ''}`, 'ok');
+    $('addNume').value = ''; $('addEmail').value = '';
+    await incarcaConturi();
+  });
 
   $('tConturi').addEventListener('click', async e => {
     const b = e.target.closest('button'); if (!b) return;

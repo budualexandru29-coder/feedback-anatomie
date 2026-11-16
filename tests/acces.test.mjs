@@ -58,6 +58,20 @@ test('Barna Ioana își vede feedbackul din ambele săli; Stoma-LR nu are respon
 test('Patrik (coordonator) vede tot, inclusiv confidențialul', async () => {
   assert.deepEqual(await vede('patrik'), ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8']);
 });
+test('supervizorul (Conf. Denes) vede tot, inclusiv confidențialul și feedbackul despre Patrik', async () => {
+  assert.deepEqual(await vede('denes'), ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8']);
+});
+test('supervizorul nu poate șterge feedback', async () => {
+  const c = await login('denes');
+  const del = await c.from('feedback').delete({ count: 'exact' }).like('descriere', 'F1 –%');
+  assert.ok(del.error || del.count === 0, 'supervizorul a putut șterge');
+});
+test('supervizorul nu poate fi ales în formular (nu e în nicio sală)', async () => {
+  const { error } = await trimite({ persoana: 'Conf. Denes', sala: 'sala-1', cheie: 'X' });
+  assert.match(error?.message || '', /nu face parte/);
+  const { data } = await anon().from('staff_sali').select('staff_id').eq('staff_id', await staffId('Conf. Denes'));
+  assert.equal(data.length, 0);
+});
 test('adminul nu vede feedbackul altora doar pentru că e admin (Sala 5: responsabil e Patrik)', async () => {
   assert.deepEqual(await vede('admin'), []);
 });
@@ -160,6 +174,41 @@ for (const [nume, o, mesaj] of [
     assert.match(error.message, mesaj);
   });
 }
+
+// ---------- Adăugarea de persoane de către admin ----------
+test('doar adminul poate adăuga persoane', async () => {
+  const c = await login('patrik');
+  const { error } = await c.rpc('adauga_persoana', { p_nume: 'Test Intrus', p_rol: 'voluntar', p_sala_id: 'sala-1' });
+  assert.match(error?.message || '', /Doar adminul/);
+  const a = await anon().rpc('adauga_persoana', { p_nume: 'Test Intrus', p_rol: 'voluntar', p_sala_id: 'sala-1' });
+  assert.ok(a.error);
+  assert.equal((await sql("select count(*)::int n from public.staff where nume = 'Test Intrus'"))[0].n, 0);
+});
+test('adminul adaugă un voluntar nou: apare în formular și responsabilul sălii îi vede feedbackul', async () => {
+  const admin = await login('admin');
+  const { error } = await admin.rpc('adauga_persoana', { p_nume: '  Test   Nou ', p_rol: 'voluntar', p_sala_id: 'sala-3' });
+  assert.ifError(error);
+  const { data } = await anon().from('staff_sali').select('rol, staff!inner(nume)').eq('sala_id', 'sala-3').eq('staff.nume', 'Test Nou');
+  assert.equal(data.length, 1, 'numele nu a fost normalizat sau nu apare în sală');
+  assert.ifError((await trimite({ cheie: 'F9', persoana: 'Test Nou', sala: 'sala-3', tip: 'pozitiv' })).error);
+  assert.deepEqual(await vede('nagy'), ['F5', 'F9']);
+});
+test('adminul adaugă o persoană existentă într-o sală nouă, fără duplicat', async () => {
+  const admin = await login('admin');
+  assert.ifError((await admin.rpc('adauga_persoana', { p_nume: 'Test Nou', p_rol: 'demonstrator', p_sala_id: 'sala-1' })).error);
+  const r = await sql("select count(distinct s.id)::int persoane, count(*)::int sali from public.staff s join public.staff_sali l on l.staff_id = s.id where s.nume = 'Test Nou'");
+  assert.deepEqual(r[0], { persoane: 1, sali: 2 });
+});
+test('un membru al unei săli nu poate deveni supervizor, iar un supervizor nu poate intra într-o sală', async () => {
+  const admin = await login('admin');
+  assert.match((await admin.rpc('adauga_persoana', { p_nume: 'Test Nou', p_rol: 'supervizor' })).error?.message || '', /deja repartizat/);
+  assert.match((await admin.rpc('adauga_persoana', { p_nume: 'Conf. Denes', p_rol: 'voluntar', p_sala_id: 'sala-1' })).error?.message || '', /supervizor/);
+});
+test('adăugarea refuză emailul folosit deja de altcineva', async () => {
+  const admin = await login('admin');
+  const { error } = await admin.rpc('adauga_persoana', { p_nume: 'Test Altul', p_rol: 'voluntar', p_sala_id: 'sala-1', p_email: OAMENI.patrik.email });
+  assert.match(error?.message || '', /deja folosit/);
+});
 
 // ---------- Anonimat ----------
 test('tabelul de feedback nu are nicio coloană care ar putea identifica studentul', async () => {

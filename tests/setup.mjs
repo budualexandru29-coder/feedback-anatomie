@@ -25,6 +25,7 @@ export const OAMENI = {
   patrik:   { nume: 'Buzgău Patrik',   email: 'patrik@test.local' },    // coordonator
   nagy:     { nume: 'Nagy David',      email: 'nagy@test.local' },      // responsabil Sala 3
   barna:    { nume: 'Barna Ioana',     email: 'barna@test.local' },     // Sala 5 + Stoma-LR
+  denes:    { nume: 'Conf. Denes',     email: 'denes@test.local', supervizor: true }, // supervizor, adăugat de admin din aplicație
 };
 
 export const anon = () => createClient(URL, ANON, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -61,7 +62,7 @@ export async function staffId(nume) {
 
 export async function reset() {
   await sql('delete from public.feedback; delete from public.limitare;');
-  await sql('alter table public.conturi disable trigger pastreaza_un_admin; delete from public.conturi; alter table public.conturi enable trigger pastreaza_un_admin;');
+  await sql("alter table public.conturi disable trigger pastreaza_un_admin; delete from public.conturi; delete from public.staff where supervizor or nume like 'Test %'; alter table public.conturi enable trigger pastreaza_un_admin;");
   const sv = service();
   const { data } = await sv.auth.admin.listUsers({ perPage: 1000 });
   for (const u of data.users) await sv.auth.admin.deleteUser(u.id);
@@ -76,7 +77,9 @@ export async function reset() {
   const admin = await login('admin');
   for (const [k, o] of Object.entries(OAMENI)) {
     if (k === 'admin') continue;
-    const ins = await admin.from('conturi').insert({ staff_id: await staffId(o.nume), email: o.email });
+    const ins = o.supervizor
+      ? await admin.rpc('adauga_persoana', { p_nume: o.nume, p_rol: 'supervizor', p_email: o.email })
+      : await admin.from('conturi').insert({ staff_id: await staffId(o.nume), email: o.email });
     if (ins.error) throw new Error(`admin adaugă ${k}: ${ins.error.message}`);
     r = await anon().auth.signUp({ email: o.email, password: PAROLA });
     if (r.error) throw new Error(`signup ${k}: ${r.error.message}`);

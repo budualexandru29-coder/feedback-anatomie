@@ -59,7 +59,7 @@
   async function incarcaLista(sb) {
     const [sali, staff, legaturi] = await Promise.all([
       sb.from('sali').select('id, nume, ordine, grupe, responsabil_id').order('ordine'),
-      sb.from('staff').select('id, nume, coordonator'),
+      sb.from('staff').select('id, nume, coordonator, supervizor'),
       sb.from('staff_sali').select('staff_id, sala_id, rol'),
     ]);
     for (const r of [sali, staff, legaturi]) if (r.error) throw r.error;
@@ -68,6 +68,7 @@
       sali: sali.data,
       persoane,
       coordonator: staff.data.find(p => p.coordonator) || null,
+      supervizori: staff.data.filter(p => p.supervizor).sort((a, b) => collator.compare(a.nume, b.nume)),
       membri(salaId) {
         return legaturi.data.filter(l => l.sala_id === salaId)
           .map(l => ({ ...persoane.get(l.staff_id), rol: l.rol }))

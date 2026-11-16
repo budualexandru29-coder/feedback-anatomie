@@ -37,6 +37,8 @@ test('studentul trimite un feedback negativ de pe telefon, anonim', async ({ pag
   await expect(page.locator('#recipients')).toContainText('Munteanu Victor');
   await expect(page.locator('#recipients')).toContainText('Jovrea Andrei (responsabil Sala 1)');
   await expect(page.locator('#recipients')).toContainText('Buzgău Patrik (coordonator)');
+  await expect(page.locator('#recipients')).toContainText('Conf. Denes (supervizor)');
+  await expect(page.getByRole('radio', { name: /Conf\. Denes/ })).toHaveCount(0);
   if (SHOTS) await page.screenshot({ path: `${SHOTS}/formular-telefon.png`, fullPage: true });
   await page.click('#trimite');
   await expect(page.locator('#done')).toBeVisible();
@@ -94,6 +96,17 @@ test('Patrik vede tot și poate șterge; adminul gestionează conturile', async 
   await rand.getByRole('button', { name: 'Salvează' }).click();
   await expect(page.locator('#contMsg')).toContainText('Salvat: Tank Hunor');
   await expect(page.locator('tr', { hasText: 'Tank Hunor' })).toContainText('Așteaptă activarea');
+
+  // Adăugare manuală a unei persoane noi
+  await page.fill('#addNume', 'Test Popescu Ana');
+  await page.selectOption('#addRol', 'voluntar');
+  await page.selectOption('#addSala', 'sala-3');
+  await page.click('#fAdauga button[type=submit]');
+  await expect(page.locator('#addMsg')).toContainText('Adăugat: Test Popescu Ana, în Sala 3, ca voluntar');
+  await expect(page.locator('tr', { hasText: 'Test Popescu Ana' })).toContainText('Sala 3');
+  await page.selectOption('#addRol', 'supervizor');
+  await expect(page.locator('#addSalaWrap')).toBeHidden();
+  await expect(page.locator('tr', { hasText: 'Conf. Denes' })).toContainText('Supervizor');
   if (SHOTS) await page.screenshot({ path: `${SHOTS}/admin-desktop.png`, fullPage: false });
 });
 

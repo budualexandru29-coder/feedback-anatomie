@@ -77,6 +77,7 @@
       if (resp && resp.id !== p.id && resp.id !== coord?.id) cine.push(`${esc(resp.nume)} (responsabil ${esc(s.nume)})`);
       if (coord && coord.id !== p.id) cine.push(`${esc(coord.nume)} (coordonator)`);
     }
+    for (const s of lista.supervizori) cine.push(`${esc(s.nume)} (supervizor)`);
     $('recipients').innerHTML = `<span class="muted">Feedbackul va fi văzut doar de:</span><ul>${cine.map(c => `<li>${c}</li>`).join('')}</ul>`;
   }
 
@@ -135,7 +136,7 @@
       }
       const p = lista.persoane.get(st.staff);
       $('doneTxt').textContent = st.destinatie === 'coordonator' && !p.coordonator
-        ? 'Feedbackul a ajuns doar la coordonatorul demonstratorilor.'
+        ? 'Feedbackul a ajuns doar la coordonatorul demonstratorilor și la supervizor.'
         : `Feedbackul despre ${p.nume} a fost înregistrat, fără date despre tine.`;
       form.hidden = true; $('done').hidden = false;
       $('done').scrollIntoView({ block: 'start' });
