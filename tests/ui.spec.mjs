@@ -104,7 +104,13 @@ test('Patrik vede tot și poate șterge; adminul gestionează conturile', async 
   await page.selectOption('#addSala', 'sala-3');
   await page.click('#fAdauga button[type=submit]');
   await expect(page.locator('#addMsg')).toContainText('Adăugat: Test Popescu Ana, în Sala 3, ca voluntar');
-  await expect(page.locator('tr', { hasText: 'Test Popescu Ana' })).toContainText('Sala 3');
+  await expect(page.locator('tr', { hasText: 'Test Popescu Ana' })).toContainText('Voluntar');
+  // ordinea: Sala 1, Sala 3, Sala 4, Sala 5, Stoma-LR, apoi Supervizori
+  const grupuri = await page.locator('#tConturi tr.grp th').allInnerTexts();
+  expect(grupuri.map(t => t.split(' ·')[0].trim())).toEqual(['Sala 1', 'Sala 3', 'Sala 4', 'Sala 5', 'Stoma-LR', 'Supervizori']);
+  const sala3 = await page.locator('#tConturi tr').evaluateAll(trs => { const out = []; let g = ''; for (const tr of trs) { if (tr.classList.contains('grp')) g = tr.innerText.split(' ·')[0].trim(); else if (g === 'Sala 3') out.push(tr.querySelector('strong').innerText); } return out; });
+  expect(sala3).toEqual([...sala3].sort((a, b) => a.localeCompare(b, 'ro')));
+  expect(sala3).toContain('Test Popescu Ana');
   await page.selectOption('#addRol', 'supervizor');
   await expect(page.locator('#addSalaWrap')).toBeHidden();
   await expect(page.locator('tr', { hasText: 'Conf. Denes' })).toContainText('Supervizor');

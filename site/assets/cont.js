@@ -162,7 +162,10 @@
     const sali = [...new Set(feedback.map(f => f.sala_id))].map(id => lista.sali.find(s => s.id === id))
       .sort((a, b) => a.ordine - b.ordine);
     const p = $('fPersoana').value, s = $('fSala').value;
-    $('fPersoana').innerHTML = '<option value="">Toți</option>' + persoane.map(x => `<option value="${x.id}">${esc(x.nume)}</option>`).join('');
+    const grupe = lista.sali.map(sa => ({ sa, oameni: lista.membri(sa.id).filter(m => persoane.some(x => x.id === m.id)) }))
+      .filter(g => g.oameni.length);
+    $('fPersoana').innerHTML = '<option value="">Toți</option>' + grupe.map(g => `<optgroup label="${esc(g.sa.nume)}">` +
+      g.oameni.map(x => `<option value="${x.id}">${esc(x.nume)}</option>`).join('') + '</optgroup>').join('');
     $('fSala').innerHTML = '<option value="">Toate</option>' + sali.map(x => `<option value="${esc(x.id)}">${esc(x.nume)}</option>`).join('');
     $('fPersoana').value = p; $('fSala').value = s;
     $('fPersoanaWrap').hidden = persoane.length < 2;
@@ -237,26 +240,47 @@
     randeazaConturi();
   }
 
+  // Tabelul e împărțit pe săli (în ordinea sălilor, alfabetic în fiecare), apoi supervizorii separat.
+  // Cine e în două săli apare în ambele.
   function randeazaConturi() {
-    const q = $('cauta').value.trim();
-    const toti = [...lista.persoane.values()].sort((a, b) => collator.compare(a.nume, b.nume))
-      .filter(p => !q || collator.compare(p.nume.slice(0, q.length), q) === 0 || p.nume.toLowerCase().includes(q.toLowerCase()));
-    $('tConturi').innerHTML = toti.map(p => {
-      const c = conturi.get(p.id);
-      const stare = !c ? '<span class="status fara">Fără cont</span>'
-        : c.user_id ? '<span class="status activ">Activ</span>' : '<span class="status asteapta">Așteaptă activarea</span>';
-      const sali = p.supervizor ? 'Supervizor' : lista.saliPersoana(p.id).map(s => esc(s.nume)).join(', ');
-      return `<tr data-staff="${p.id}">
-        <td><strong>${esc(p.nume)}</strong>${p.coordonator ? ' <span class="tag coord">Coord.</span>' : ''}</td>
-        <td class="muted">${sali}</td>
-        <td><input type="email" aria-label="Email ${esc(p.nume)}" value="${esc(c?.email || '')}" placeholder="email@exemplu.ro"></td>
-        <td>${stare}</td>
-        <td><input type="checkbox" aria-label="Admin ${esc(p.nume)}" ${c?.admin ? 'checked' : ''}></td>
-        <td><span class="chips" style="flex-wrap:nowrap">
-          <button type="button" class="btn sm" data-salveaza="1">Salvează</button>
-          ${c ? '<button type="button" class="btn ghost sm" data-elimina="1">Elimină</button>' : ''}
-        </span></td></tr>`;
-    }).join('');
+    const q = $('cauta').value.trim().toLowerCase();
+    const potrivit = p => !q || p.nume.toLowerCase().includes(q) || collator.compare(p.nume.slice(0, q.length), q) === 0;
+    const grupuri = lista.sali.map(s => {
+      const resp = s.responsabil_id ? lista.persoane.get(s.responsabil_id) : null;
+      const info = [s.grupe ? `${s.grupe} ${s.grupe === 1 ? 'grupă' : 'grupe'}` : '', resp ? `responsabil: ${resp.nume}` : ''].filter(Boolean).join(' · ');
+      return {
+        titlu: s.nume, info,
+        oameni: lista.membri(s.id).filter(potrivit).map(p => {
+          const rol = p.coordonator ? 'Coordonator' : s.responsabil_id === p.id ? 'Responsabil sală' : p.rol === 'voluntar' ? 'Voluntar' : 'Demonstrator';
+          const alte = lista.saliPersoana(p.id).filter(x => x.id !== s.id).map(x => x.nume);
+          return { p, rol: rol + (alte.length ? ` · și în ${alte.join(', ')}` : '') };
+        }),
+      };
+    });
+    grupuri.push({ titlu: 'Supervizori', info: 'văd tot feedbackul; nu apar în formularul studenților',
+      oameni: lista.supervizori.filter(potrivit).map(p => ({ p, rol: 'Supervizor' })) });
+    const faraSala = [...lista.persoane.values()].filter(p => !p.supervizor && !lista.saliPersoana(p.id).length && potrivit(p))
+      .sort((a, b) => collator.compare(a.nume, b.nume));
+    if (faraSala.length) grupuri.push({ titlu: 'Fără sală', info: '', oameni: faraSala.map(p => ({ p, rol: '—' })) });
+
+    const randuri = grupuri.filter(g => g.oameni.length).map(g =>
+      `<tr class="grp"><th colspan="6">${esc(g.titlu)}${g.info ? ` <span>· ${esc(g.info)}</span>` : ''}</th></tr>` +
+      g.oameni.map(({ p, rol }) => {
+        const c = conturi.get(p.id);
+        const stare = !c ? '<span class="status fara">Fără cont</span>'
+          : c.user_id ? '<span class="status activ">Activ</span>' : '<span class="status asteapta">Așteaptă activarea</span>';
+        return `<tr data-staff="${p.id}">
+          <td><strong>${esc(p.nume)}</strong></td>
+          <td class="muted">${esc(rol)}</td>
+          <td><input type="email" aria-label="Email ${esc(p.nume)}" value="${esc(c?.email || '')}" placeholder="email@exemplu.ro"></td>
+          <td>${stare}</td>
+          <td><input type="checkbox" aria-label="Admin ${esc(p.nume)}" ${c?.admin ? 'checked' : ''}></td>
+          <td><span class="chips" style="flex-wrap:nowrap">
+            <button type="button" class="btn sm" data-salveaza="1">Salvează</button>
+            ${c ? '<button type="button" class="btn ghost sm" data-elimina="1">Elimină</button>' : ''}
+          </span></td></tr>`;
+      }).join('')).join('');
+    $('tConturi').innerHTML = randuri || '<tr><td colspan="6" class="muted">Nicio persoană nu se potrivește cu căutarea.</td></tr>';
   }
   $('cauta').addEventListener('input', randeazaConturi);
 
