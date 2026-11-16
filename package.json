@@ -9,7 +9,10 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.65.1",
+    "jsqr": "^1.4.0",
     "pg": "^8.23.1",
+    "pngjs": "^7.0.0",
+    "qrcode": "^1.5.4",
     "supabase": "^3.2.0"
   },
   "dependencies": {
