@@ -20,7 +20,15 @@ Feedback anonim de la studenții din anul I pentru demonstratorii și voluntarii
 - Doar Patrik poate șterge un feedback (moderare).
 - Feedbackul se șterge automat după 12 luni.
 
-## Punerea online (o singură dată, cam 20 de minute)
+## Stare (16.11.2026)
+- Proiect Supabase: `feedback-anatomie` (ref `bnqwxngjrgwoannbwwrd`, Frankfurt), organizația „Catedra Anatomie”.
+  - Schema, lista de nume și setările de autentificare sunt aplicate.
+  - Adminul este Budu Alexandru.
+- Parola bazei de date e salvată local în `~/.feedback-anatomie-db-password` și nu e în repository.
+- Site: https://budualexandru29-coder.github.io/feedback-anatomie/
+- Pentru modificări în schemă: `SUPABASE_DB_PASSWORD=$(cat ~/.feedback-anatomie-db-password) npx supabase db push --remote`.
+
+## Punerea online de la zero (dacă e nevoie de un proiect nou)
 
 ### 1. Baza de date: Supabase
 1. Fă-ți cont pe https://supabase.com și creează un proiect nou (**New project**). La **Region** alege **Central EU (Frankfurt)**, ca datele să rămână în UE.
